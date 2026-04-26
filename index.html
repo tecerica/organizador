@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Organizador de Vida</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --warm-white: #FFFDF9;
+    --ink: #1A1A18;
+    --ink-light: #3D3D3A;
+    --gold: #C9A84C;
+    --gold-light: #E8D5A3;
+    --gold-pale: #F5EDD8;
+    --terracotta: #C4614A;
+    --sage: #7A8C6E;
+    --sky: #5B7FA6;
+    --lavender: #8A7BA8;
+    --border: #E5DDD0;
+    --shadow: rgba(26,26,24,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+  }
+  .header-left h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--cream);
+  }
+  .header-left h1 span { color: var(--gold); }
+  .header-left p {
+    font-size: 0.78rem;
+    color: #999;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .header-actions { display: flex; gap: 10px; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .btn-gold {
+    background: var(--gold);
+    color: var(--ink);
+  }
+  .btn-gold:hover { background: #B8973D; transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--cream);
+    border: 1.5px solid #444;
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-print {
+    background: var(--cream);
+    color: var(--ink);
+  }
+  .btn-print:hover { background: var(--gold-pale); }
+
+  /* ===== MAIN ===== */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  /* ===== DATE BAR ===== */
+  .date-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .date-display {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--ink-light);
+  }
+  .date-display strong { color: var(--ink); }
+  .summary-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+  .chip {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+  .chip-urgent { background: #FFE8E4; color: var(--terracotta); }
+  .chip-normal { background: #E8F0FF; color: var(--sky); }
+  .chip-done { background: #E8F0E8; color: var(--sage); }
+
+  /* ===== ADD TASK PANEL ===== */
+  .add-panel {
+    background: var(--warm-white);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .add-panel h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .add-panel h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto auto;
+    gap: 12px;
+    align-items: end;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    background: var(--cream);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--gold);
+    background: var(--warm-white);
+  }
+  .form-row-full { grid-column: 1 / -1; }
+  .form-group textarea { resize: vertical; min-height: 60px; }
+
+  /* ===== CATEGORIES ===== */
+  .categories-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .cat-btn {
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: var(--warm-white);
+    color: var(--ink-light);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cat-btn.active, .cat-btn:hover {
+    background: var(--ink);
+    color: var(--cream);
+    border-color: var(--ink);
+  }
+
+  /* ===== TASKS LIST ===== */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink-light);
+  }
+  .section-title .line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .tasks-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+
+  .task-card {
+    background: var(--warm-white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: all 0.22s;
+    position: relative;
+    overflow: hidden;
+    animation: slideIn 0.25s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .task-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 2px 0 0 2px;
+  }
+  .task-card.urgente::before { background: var(--terracotta); }
+  .task-card.alta::before { background: #E8972A; }
+  .task-card.media::before { background: var(--sky); }
+  .task-card.baixa::before { background: var(--sage); }
+
+  .task-card:hover { box-shadow: 0 4px 18px var(--shadow); transform: translateY(-1px); }
+  .task-card.done { opacity: 0.55; }
+  .task-card.done .task-title { text-decoration: line-through; color: #aaa; }
+
+  .task-check {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    margin-top: 1px;
+  }
+  .task-check:hover { border-color: var(--gold); }
+  .task-check.checked { background: var(--sage); border-color: var(--sage); }
+  .task-check.checked::after { content: '✓'; color: white; font-size: 13px; font-weight: 700; }
+
+  .task-body { flex: 1; min-width: 0; }
+  .task-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .task-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.35;
+    color: var(--ink);
+  }
+  .task-meta { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; margin-top: 5px; }
+  .tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .tag-urgente { background: #FFE8E4; color: var(--terracotta); }
+  .tag-alta { background: #FFF0D9; color: #B87020; }
+  .tag-media { background: #E8F0FF; color: var(--sky); }
+  .tag-baixa { background: #E8F0E8; color: var(--sage); }
+  .tag-cat {
+    background: var(--gold-pale);
+    color: var(--ink-light);
+    font-size: 0.68rem;
+  }
+  .task-desc {
+    font-size: 0.82rem;
+    color: #777;
+    margin-top: 5px;
+    line-height: 1.5;
+  }
+  .task-date {
+    font-size: 0.72rem;
+    color: #aaa;
+    margin-top: 4px;
+  }
+
+  .task-actions { display: flex; gap: 5px; flex-shrink: 0; }
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--cream);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    transition: all 0.18s;
+    color: var(--ink-light);
+  }
+  .icon-btn:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .icon-btn.whatsapp:hover { background: #25D366; border-color: #25D366; }
+  .icon-btn.delete:hover { background: var(--terracotta); border-color: var(--terracotta); }
+  .icon-btn.edit:hover { background: var(--sky); border-color: var(--sky); color: white; }
+
+  /* ===== EMPTY STATE ===== */
+  .empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: #ccc;
+  }
+  .empty .icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty p { font-size: 0.88rem; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,24,0.55);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--warm-white);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    animation: popIn 0.22s ease;
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+  .btn-cancel {
+    background: var(--border);
+    color: var(--ink);
+    border: none;
+  }
+  .btn-cancel:hover { background: #d9d0c4; }
+  .btn-save {
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+  }
+  .btn-save:hover { background: var(--gold); color: var(--ink); }
+
+  /* ===== PRINT ===== */
+  @media print {
+    header { position: static; background: var(--ink) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header-actions, .add-panel, .categories-row, .task-actions, .icon-btn { display: none !important; }
+    .task-card { break-inside: avoid; border: 1px solid #ddd !important; box-shadow: none !important; }
+    .task-card::before { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    main { padding: 16px; }
+    body { background: white; }
+    .print-header {
+      display: block !important;
+      text-align: center;
+      padding: 16px 0;
+      border-bottom: 2px solid var(--ink);
+      margin-bottom: 20px;
+    }
+    .tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  .print-header { display: none; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 700px) {
+    header { padding: 16px 18px; flex-wrap: wrap; gap: 12px; }
+    .form-grid { grid-template-columns: 1fr 1fr; }
+    main { padding: 18px 14px 60px; }
+    .date-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
+  }
+  @media (max-width: 480px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .header-actions { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>Meu <span>Organizador</span></h1>
+    <p>Controle de tarefas &amp; prioridades · criado por <span style="color:var(--gold);font-weight:600">Erica Barbosa</span></p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-outline" onclick="shareAll()">📤 Enviar tudo</button>
+    <button class="btn btn-print" onclick="window.print()">🖨️ Imprimir</button>
+  </div>
+</header>
+
+<div class="print-header">
+  <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem">Meu Organizador de Vida</h2>
+  <p id="printDate" style="color:#666;margin-top:4px"></p>
+  <p style="color:#aaa;font-size:0.8rem;margin-top:4px">Criado por Erica Barbosa</p>
+</div>
+
+<main>
+  <div class="date-bar">
+    <div class="date-display" id="dateDisplay"></div>
+    <div class="summary-chips" id="summaryChips"></div>
+  </div>
+
+  <!-- ADD PANEL -->
+  <div class="add-panel">
+    <h2>Nova Tarefa</h2>
+    <div class="form-grid">
+      <div class="form-group form-row-full">
+        <label>Título *</label>
+        <input type="text" id="inp-title" placeholder="O que precisa ser feito?" />
+      </div>
+      <div class="form-group">
+        <label>Prioridade</label>
+        <select id="inp-priority">
+          <option value="urgente">🔴 Urgente</option>
+          <option value="alta">🟠 Alta</option>
+          <option value="media" selected>🔵 Média</option>
+          <option value="baixa">🟢 Baixa</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Categoria</label>
+        <select id="inp-category">
+          <option value="Pessoal">👤 Pessoal</option>
+          <option value="Trabalho">💼 Trabalho</option>
+          <option value="Saúde">🏥 Saúde</option>
+          <option value="Estudo">📚 Estudo</option>
+          <option value="Financeiro">💰 Financeiro</option>
+          <option value="Casa">🏠 Casa</option>
+          <option value="Outros">📌 Outros</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Prazo</label>
+        <input type="date" id="inp-date" />
+      </div>
+      <div class="form-group" style="align-self:end">
+        <button class="btn btn-gold" style="width:100%;justify-content:center;padding:10px 14px" onclick="addTask()">＋ Adicionar</button>
+      </div>
+      <div class="form-group form-row-full">
+        <label>Detalhes / Observações</label>
+        <textarea id="inp-desc" placeholder="Informações adicionais (opcional)"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="categories-row" id="catFilter">
+    <button class="cat-btn active" data-cat="Todas" onclick="filterCat(this)">🗂️ Todas</button>
+    <button class="cat-btn" data-cat="Pessoal" onclick="filterCat(this)">👤 Pessoal</button>
+    <button class="cat-btn" data-cat="Trabalho" onclick="filterCat(this)">💼 Trabalho</button>
+    <button class="cat-btn" data-cat="Saúde" onclick="filterCat(this)">🏥 Saúde</button>
+    <button class="cat-btn" data-cat="Estudo" onclick="filterCat(this)">📚 Estudo</button>
+    <button class="cat-btn" data-cat="Financeiro" onclick="filterCat(this)">💰 Financeiro</button>
+    <button class="cat-btn" data-cat="Casa" onclick="filterCat(this)">🏠 Casa</button>
+    <button class="cat-btn" data-cat="Outros" onclick="filterCat(this)">📌 Outros</button>
+  </div>
+
+  <!-- LISTS -->
+  <div class="section-title">🔴 Urgente &amp; Alta Prioridade <div class="line"></div></div>
+  <div class="tasks-grid" id="list-urgent"></div>
+
+  <div class="section-title">🔵 Média &amp; Baixa Prioridade <div class="line"></div></div>
+  <div class="tasks-grid" id="list-normal"></div>
+
+  <div class="section-title">✅ Concluídas <div class="line"></div></div>
+  <div class="tasks-grid" id="list-done"></div>
+</main>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3>✏️ Editar Tarefa</h3>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="form-group">
+        <label>Título</label>
+        <input type="text" id="edit-title" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label>Prioridade</label>
+          <select id="edit-priority">
+            <option value="urgente">🔴 Urgente</option>
+            <option value="alta">🟠 Alta</option>
+            <option value="media">🔵 Média</option>
+            <option value="baixa">🟢 Baixa</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Categoria</label>
+          <select id="edit-category">
+            <option value="Pessoal">👤 Pessoal</option>
+            <option value="Trabalho">💼 Trabalho</option>
+            <option value="Saúde">🏥 Saúde</option>
+            <option value="Estudo">📚 Estudo</option>
+            <option value="Financeiro">💰 Financeiro</option>
+            <option value="Casa">🏠 Casa</option>
+            <option value="Outros">📌 Outros</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Prazo</label>
+        <input type="date" id="edit-date" />
+      </div>
+      <div class="form-group">
+        <label>Detalhes</label>
+        <textarea id="edit-desc"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-save" onclick="saveEdit()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var tasks = JSON.parse(localStorage.getItem('organizer_tasks') || '[]');
+var activeFilter = 'Todas';
+var editingId = null;
+
+function save() {
+  localStorage.setItem('organizer_tasks', JSON.stringify(tasks));
+}
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+function addTask() {
+  var title = document.getElementById('inp-title').value.trim();
+  if (!title) { document.getElementById('inp-title').focus(); return; }
+  var task = {
+    id: uid(),
+    title: title,
+    priority: document.getElementById('inp-priority').value,
+    category: document.getElementById('inp-category').value,
+    date: document.getElementById('inp-date').value,
+    desc: document.getElementById('inp-desc').value.trim(),
+    done: false,
+    created: new Date().toISOString()
+  };
+  tasks.unshift(task);
+  save();
+  document.getElementById('inp-title').value = '';
+  document.getElementById('inp-desc').value = '';
+  document.getElementById('inp-date').value = '';
+  render();
+}
+
+function toggleDone(id) {
+  tasks = tasks.map(function(t) {
+    return t.id === id ? Object.assign({}, t, {done: !t.done}) : t;
+  });
+  save(); render();
+}
+
+function deleteTask(id) {
+  if (!confirm('Excluir esta tarefa?')) return;
+  tasks = tasks.filter(function(t) { return t.id !== id; });
+  save(); render();
+}
+
+function openEdit(id) {
+  var t = tasks.find(function(x) { return x.id === id; });
+  if (!t) return;
+  editingId = id;
+  document.getElementById('edit-title').value = t.title;
+  document.getElementById('edit-priority').value = t.priority;
+  document.getElementById('edit-category').value = t.category;
+  document.getElementById('edit-date').value = t.date || '';
+  document.getElementById('edit-desc').value = t.desc || '';
+  document.getElementById('editModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('show');
+  editingId = null;
+}
+
+function saveEdit() {
+  if (!editingId) return;
+  tasks = tasks.map(function(t) {
+    if (t.id !== editingId) return t;
+    return Object.assign({}, t, {
+      title: document.getElementById('edit-title').value.trim() || t.title,
+      priority: document.getElementById('edit-priority').value,
+      category: document.getElementById('edit-category').value,
+      date: document.getElementById('edit-date').value,
+      desc: document.getElementById('edit-desc').value.trim()
+    });
+  });
+  save(); closeModal(); render();
+}
+
+function sendWhatsApp(id) {
+  var t = tasks.find(function(x) { return x.id === id; });
+  if (!t) return;
+  var priMap = {urgente:'🔴 URGENTE', alta:'🟠 ALTA', media:'🔵 MÉDIA', baixa:'🟢 BAIXA'};
+  var msg = '📋 *TAREFA*\n\n';
+  msg += '*' + t.title + '*\n';
+  msg += '🎯 Prioridade: ' + priMap[t.priority] + '\n';
+  msg += '🏷️ Categoria: ' + t.category + '\n';
+  if (t.date) msg += '📅 Prazo: ' + formatDate(t.date) + '\n';
+  if (t.desc) msg += '📝 Detalhes: ' + t.desc + '\n';
+  msg += '\n_Enviado pelo Meu Organizador de Vida_';
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function shareAll() {
+  var visible = tasks.filter(function(t) {
+    return !t.done && (activeFilter === 'Todas' || t.category === activeFilter);
+  });
+  if (!visible.length) { alert('Nenhuma tarefa pendente para enviar.'); return; }
+  var priMap = {urgente:'🔴', alta:'🟠', media:'🔵', baixa:'🟢'};
+  var msg = '📋 *MEU ORGANIZADOR DE VIDA*\n';
+  msg += '🗓️ ' + new Date().toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long'}) + '\n\n';
+  visible.forEach(function(t, i) {
+    msg += priMap[t.priority] + ' *' + (i+1) + '. ' + t.title + '*\n';
+    if (t.date) msg += '   📅 ' + formatDate(t.date) + '\n';
+    if (t.desc) msg += '   ' + t.desc + '\n';
+    msg += '\n';
+  });
+  msg += '_Total: ' + visible.length + ' tarefa(s) pendente(s)_';
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function filterCat(btn) {
+  document.querySelectorAll('.cat-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  activeFilter = btn.dataset.cat;
+  render();
+}
+
+function formatDate(str) {
+  if (!str) return '';
+  var parts = str.split('-');
+  return parts[2] + '/' + parts[1] + '/' + parts[0];
+}
+
+function isOverdue(str) {
+  if (!str) return false;
+  return new Date(str + 'T23:59:59') < new Date();
+}
+
+function cardHTML(t) {
+  var priMap = {urgente:'Urgente', alta:'Alta', media:'Média', baixa:'Baixa'};
+  var overdue = !t.done && isOverdue(t.date);
+  return '<div class="task-card ' + t.priority + (t.done ? ' done' : '') + '" id="task-' + t.id + '">' +
+    '<div class="task-check' + (t.done ? ' checked' : '') + '" onclick="toggleDone(\'' + t.id + '\')"></div>' +
+    '<div class="task-body">' +
+      '<div class="task-top">' +
+        '<div class="task-title">' + escHtml(t.title) + '</div>' +
+        '<div class="task-actions">' +
+          '<button class="icon-btn whatsapp" title="Enviar pelo WhatsApp" onclick="sendWhatsApp(\'' + t.id + '\')">💬</button>' +
+          '<button class="icon-btn edit" title="Editar" onclick="openEdit(\'' + t.id + '\')">✏️</button>' +
+          '<button class="icon-btn delete" title="Excluir" onclick="deleteTask(\'' + t.id + '\')">🗑️</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="task-meta">' +
+        '<span class="tag tag-' + t.priority + '">' + priMap[t.priority] + '</span>' +
+        '<span class="tag tag-cat">' + t.category + '</span>' +
+        (overdue ? '<span class="tag" style="background:#FFE8E4;color:#C4614A">⚠️ Atrasada</span>' : '') +
+      '</div>' +
+      (t.desc ? '<div class="task-desc">' + escHtml(t.desc) + '</div>' : '') +
+      (t.date ? '<div class="task-date">📅 ' + formatDate(t.date) + '</div>' : '') +
+    '</div>' +
+  '</div>';
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function render() {
+  var filtered = tasks.filter(function(t) {
+    return activeFilter === 'Todas' || t.category === activeFilter;
+  });
+  var urgent = filtered.filter(function(t) { return !t.done && (t.priority === 'urgente' || t.priority === 'alta'); });
+  var normal = filtered.filter(function(t) { return !t.done && (t.priority === 'media' || t.priority === 'baixa'); });
+  var done = filtered.filter(function(t) { return t.done; });
+
+  var lu = document.getElementById('list-urgent');
+  var ln = document.getElementById('list-normal');
+  var ld = document.getElementById('list-done');
+
+  lu.innerHTML = urgent.length ? urgent.map(cardHTML).join('') : '<div class="empty"><div class="icon">✨</div><p>Nenhuma tarefa urgente</p></div>';
+  ln.innerHTML = normal.length ? normal.map(cardHTML).join('') : '<div class="empty"><div class="icon">🌿</div><p>Nenhuma tarefa pendente</p></div>';
+  ld.innerHTML = done.length ? done.map(cardHTML).join('') : '<div class="empty"><p>Nenhuma tarefa concluída ainda</p></div>';
+
+  // Summary chips
+  var all = tasks.filter(function(t) { return !t.done; });
+  var urgCount = all.filter(function(t) { return t.priority === 'urgente' || t.priority === 'alta'; }).length;
+  document.getElementById('summaryChips').innerHTML =
+    '<span class="chip chip-urgent">🔴 ' + urgCount + ' urgente(s)</span>' +
+    '<span class="chip chip-normal">🔵 ' + (all.length - urgCount) + ' pendente(s)</span>' +
+    '<span class="chip chip-done">✅ ' + tasks.filter(function(t){return t.done;}).length + ' concluída(s)</span>';
+
+  // Date
+  var now = new Date();
+  document.getElementById('dateDisplay').innerHTML = '<strong>' + now.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) + '</strong>';
+  document.getElementById('printDate').textContent = now.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+}
+
+// Close modal on overlay click
+document.getElementById('editModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Enter to add
+document.getElementById('inp-title').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') addTask();
+});
+
+render();
+</script>
+</body>
+</html>
